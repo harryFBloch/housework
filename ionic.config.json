@@ -1,0 +1,7 @@
+{
+  "name": "doing-housework",
+  "integrations": {
+    "capacitor": {}
+  },
+  "type": "react"
+}
