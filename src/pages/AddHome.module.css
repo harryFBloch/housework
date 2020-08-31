@@ -1,0 +1,24 @@
+.phaseOneContainer {
+  padding-top: 32px;
+}
+
+.pageContainer {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  justify-content: center;
+  justify-items: center;
+}
+
+.icon {
+  width: 100%;
+  height: 100px;
+}
+
+.bigButton {
+  width: 150px;
+}
+
+.section {
+  padding: 8px
+}
