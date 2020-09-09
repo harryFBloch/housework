@@ -14,11 +14,27 @@ export interface Task {
   isDeleted: boolean,
 }
 
+export const TaskTemplate: Task = {
+  id: '',
+  name: '',
+  cleanInterval: 0,
+  lastCleaned: '',
+  cleanedHistory: [],
+  isDeleted: false
+}
+
 export interface Room {
   id: string,
   name: string,
   tasks: {[id: string]: Task}
   isDeleted: boolean,
+}
+
+export const RoomTemplate: Room = {
+  id: '',
+  name: '',
+  tasks: {},
+  isDeleted: false
 }
 
 export interface Home {
@@ -29,11 +45,18 @@ export interface Home {
   isDeleted: boolean,
 }
 
+export const HomeTemplate: Home = {
+  id: '',
+  name: '',
+  rooms: {},
+  owner: '',
+  isDeleted: false
+}
+
 export type Homes = {[id: string]: Home}
 
-
-
 export type HomesAction = 
-{ type: ActionType.GET_HOMES, homes: Homes } 
+{ type: ActionType.GET_HOMES, homes: Homes } | 
+{ type: ActionType.SAVE_HOME, home: Home}
   
   

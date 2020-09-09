@@ -3,7 +3,7 @@ import { IonMenu, IonToolbar, IonHeader, IonTitle, IonContent, IonButton, IonLis
 import { connect } from 'react-redux';
 import "react-datepicker/dist/react-datepicker.css"
 import { bindActionCreators } from 'redux';
-import { RootState, ThunkDispatchType, actions, Auth, Toast } from '../store';
+import { RootState, ThunkDispatchType, actions, Auth, Toast, Homes } from '../store';
 import classes from './LeftMenu.module.css';
 import { IAPProduct } from '@ionic-native/in-app-purchase-2';
 import { logout } from '../store/auth/actions';
@@ -14,13 +14,17 @@ interface ReduxStateProps {
   removeAds: boolean;
   auth: Auth;
   toast: Toast,
+  homes: Homes,
+  currentHome: string,
 };
 
 const mapStateToProps = (state: RootState): ReduxStateProps => ({
   products: state.flags.products,
   removeAds: state.flags.removeAds,
   auth: state.auth,
-  toast: state.flags.toast
+  toast: state.flags.toast,
+  homes: state.homes.homes,
+  currentHome: state.homes.currentHome,
 });
 
 // Need to define types here because it won't infer properly from ThunkResult right now
@@ -40,7 +44,7 @@ const mapDispatchToProps = (dispatch: ThunkDispatchType): ReduxDispatchProps => 
 
 type Props = ReturnType<typeof mapStateToProps> & ReturnType<typeof mapDispatchToProps> & RouteComponentProps
 
-export const LeftMenu = ({ initializeInter, products, subscribe, removeAds, auth, restorePurchase, toast, getHomes, history }: Props): ReactElement => {
+export const LeftMenu = ({ initializeInter, products, subscribe, removeAds, auth, restorePurchase, toast, getHomes, history, homes, currentHome }: Props): ReactElement => {
 
   const [alert, setAlert] = useState(false)
 
@@ -72,9 +76,26 @@ export const LeftMenu = ({ initializeInter, products, subscribe, removeAds, auth
     )
   }
 
+  const renderHomes = (): ReactElement => {
+    return (
+    <IonList>
+      {Object.keys(homes).map(homeID => {
+        const home = homes[homeID]
+        return (
+          <IonItem lines="none" key={'homes-' + home.id} color={currentHome === home.id ? 'primary' : 'secondary'}>
+            <IonLabel slot="start">{home.name}</IonLabel>
+          </IonItem>
+        )
+      }  
+      )}
+    </IonList>)
+  }
+
   return (
     <IonMenu side="start" menuId="left" contentId='main' color="secondary">
       <IonContent color="secondary">
+
+        {renderHomes()}
 
         {!removeAds && products[0] && renderProducts(products[0])}
         <IonButton className={classes.productButton} onClick={restorePurchase}>Restore Purchases</IonButton>

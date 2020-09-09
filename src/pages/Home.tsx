@@ -49,7 +49,7 @@ const Home = ({ showInter, removeAds, history, sendToast, products, subscribe}: 
   return (
     <IonPage>
       <Toolbar rightButtons={
-        <IonButton routerLink='/adventure' routerDirection="forward">
+        <IonButton routerLink='/addHome' routerDirection="forward">
           <IonIcon icon={addOutline}/>
         </IonButton>}/>
         <IonContent>

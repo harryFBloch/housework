@@ -16,9 +16,26 @@
 }
 
 .bigButton {
-  width: 150px;
+  width: 200px;
 }
 
 .section {
-  padding: 8px
+  padding: 8px;
+  border: solid var(--ion-color-primary) 3px;
+  margin-bottom: 8px;
+  border-radius: 25px;
+}
+
+.button {
+  display: flex;
+  justify-content: center;
+}
+
+.roomContainer {
+  padding: 8px;
+  margin-left: 4px;
+  margin-right: 4px;
+  border: solid var(--ion-color-primary) 3px;
+  border-radius: 16px;
+  margin-bottom: 8px;
 }

@@ -3,28 +3,31 @@ import firebase from '../../config/FirebaseConfig';
 import 'firebase/database';
 import { ActionType } from "../actionTypes";
 import { RootState } from "..";
-import { Homes } from "./types";
+import { Home } from "./types";
 
 export const getHomes = (): ThunkResult<Promise<void>> =>
   async ( dispatch: ThunkDispatchType, getState: () => RootState ): Promise<void> => {
     return firebase.database().ref(`/users/${getState().auth.uid}/`).once('value')
     .then((snapshot) => {
       if (snapshot.val()) {
-        const homeIDS = snapshot.val()
-        const homes = {} as Homes
-        homeIDS.forEach((id: string, i: number) => 
-        firebase.database().ref(`/homes/${id}`).once('value')
-        .then((snapshot) => {
-          const home = snapshot.val()
-          homes[home.id] = home
-          if (i === homeIDS.length) {
-            dispatch({type: ActionType.GET_HOMES, homes: homes})
-            return Promise.resolve()
-          }
-        })
-        )  
+        dispatch({type: ActionType.GET_HOMES, homes: snapshot.val().homes})
+        return Promise.resolve()
       } else {
         return Promise.reject()
       }
+    })
+}
+
+
+export const saveHome = (house: Home): ThunkResult<Promise<void>> =>
+  async ( dispatch: ThunkDispatchType, getState: () => RootState ): Promise<void> => {
+    const uid = getState().auth.uid;
+    const houseID = house.id === '' ? String(Object.keys(getState().homes).length) : house.id
+    house.id = houseID
+    console.log(houseID, house.id, 'id check')
+    firebase.database().ref(`/users/${uid}/homes/${houseID}`).set(house)
+    .then(referance => {
+      dispatch({ type: ActionType.SAVE_HOME, home: house})
+      return Promise.resolve()
     })
 }
