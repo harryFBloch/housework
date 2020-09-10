@@ -103,13 +103,17 @@ const AddHome = ({ saveHome, sendToast }: Props): ReactElement => {
   return (
     <IonPage>
       <Toolbar back rightButtons={
-        <IonButton routerLink="/" routerDirection="back"
-          onClick={() => {
-            saveHome(house)
-            sendToast({message: 'Home Saved', open: true, color: 'primary'})
-        }}>
-          Save
-        </IonButton>}
+        <>
+        { phase === 1 &&
+          <IonButton routerLink="/home" routerDirection="back"
+            onClick={() => {
+              saveHome(house)
+              sendToast({message: 'Home Saved', open: true, color: 'primary'})
+          }}>
+            Save
+          </IonButton> 
+          }
+        </>}
       />
         <IonContent>
           {phase === 0 && renderPhaseZero()}

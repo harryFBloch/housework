@@ -22,9 +22,9 @@ export const getHomes = (): ThunkResult<Promise<void>> =>
 export const saveHome = (house: Home): ThunkResult<Promise<void>> =>
   async ( dispatch: ThunkDispatchType, getState: () => RootState ): Promise<void> => {
     const uid = getState().auth.uid;
-    const houseID = house.id === '' ? String(Object.keys(getState().homes).length) : house.id
+    const houseID = house.id === '' ? String(Object.keys(getState().homes.homes).length) : house.id
     house.id = houseID
-    console.log(houseID, house.id, 'id check')
+    house.owner = uid
     firebase.database().ref(`/users/${uid}/homes/${houseID}`).set(house)
     .then(referance => {
       dispatch({ type: ActionType.SAVE_HOME, home: house})
