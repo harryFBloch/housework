@@ -1,12 +1,12 @@
-import { IonPage, IonIcon, IonContent, IonButton } from '@ionic/react';
+import { IonPage, IonIcon, IonContent, IonButton, IonList, IonText, IonItem, IonLabel, IonItemSliding, IonItemOptions, IonItemOption, IonProgressBar } from '@ionic/react';
 import React, { ReactElement, useEffect, useState, useRef } from 'react';
 import firebase from '../config/FirebaseConfig';
 import 'firebase/analytics';
-import { RootState, ThunkDispatchType, actions, Toast } from '../store';
+import { RootState, ThunkDispatchType, actions, Toast, Homes } from '../store';
 import { bindActionCreators } from 'redux';
 import { RouteComponentProps } from 'react-router';
 import { connect } from 'react-redux';
-import { addOutline } from 'ionicons/icons';
+import { addOutline, checkbox } from 'ionicons/icons';
 import Toolbar from '../components/common/Toolbar';
 import classes from './Home.module.css';
 import { IAPProduct } from '@ionic-native/in-app-purchase-2';
@@ -14,11 +14,15 @@ import { IAPProduct } from '@ionic-native/in-app-purchase-2';
 interface ReduxStateProps {
   removeAds: boolean;
   products: IAPProduct[];
+  homes: Homes;
+  currentHomeID: string;
 };
 
 const mapStateToProps = (state: RootState): ReduxStateProps => ({
   removeAds: state.flags.removeAds,
   products: state.flags.products,
+  homes: state.homes.homes,
+  currentHomeID: state.homes.currentHome,
 });
 
 // Need to define types here because it won't infer properly from ThunkResult right now
@@ -36,7 +40,7 @@ const mapDispatchToProps = (dispatch: ThunkDispatchType): ReduxDispatchProps => 
 
 type Props = ReturnType<typeof mapStateToProps> & ReturnType<typeof mapDispatchToProps> & RouteComponentProps
 
-const Home = ({ showInter, removeAds, history, sendToast, products, subscribe}: Props): ReactElement => {
+const Home = ({ showInter, removeAds, history, sendToast, products, subscribe, homes, currentHomeID}: Props): ReactElement => {
 
   const listRef = useRef<HTMLIonListElement>(null)
 
@@ -45,6 +49,8 @@ const Home = ({ showInter, removeAds, history, sendToast, products, subscribe}: 
       listRef.current.closeSlidingItems()
     }
   }
+
+  const currentHome = homes[currentHomeID];
     
   return (
     <IonPage>
@@ -63,7 +69,37 @@ const Home = ({ showInter, removeAds, history, sendToast, products, subscribe}: 
               </IonButton>
             }
           </div>
-          <h1>HOME</h1>
+          { currentHome && 
+            <IonList ref={listRef}>
+              {Object.values(currentHome.rooms).map( room => {
+                return (
+                  <div key={`room-${room.id}`}>
+                    <IonText>{room.name}</IonText>
+                    {Object.values(room.tasks).map(task => {
+                      return (
+                        <>
+                        <IonItemSliding key={`${room.id}-task-${task.id}`}>
+                          <IonItemOptions side="start">
+                            <IonItemOption color="primary"
+                              onClick={() => {
+                                closeList()
+                                }}>
+                              <IonIcon slot="icon-only" icon={checkbox}/>
+                          </IonItemOption>
+                        </IonItemOptions>
+                          <IonItem lines='full'>
+                            <IonLabel slot="start">{task.name}</IonLabel>
+                          </IonItem>
+                        </IonItemSliding>
+                        <IonProgressBar value={0.6}></IonProgressBar><br />
+                        </>
+                      )
+                    })}
+                  </div>
+                )
+              })}
+
+          </IonList>}
         </IonContent>
     </IonPage>
   );
