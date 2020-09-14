@@ -126,3 +126,11 @@ const s = new Date(start).getTime()
 const e = new Date(end).getTime()
  return ((today - s) / (e-s))
 }
+
+export const percentDoneInterval = (start: string, interval: number) => {
+  const today = new Date().getTime();
+  const s = new Date(start).getTime()
+  const e = new Date(start).getTime() + interval
+  console.log(s,e)
+  return ((today - s) / (e-s))
+}

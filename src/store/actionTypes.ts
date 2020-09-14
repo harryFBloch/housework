@@ -24,4 +24,7 @@ export enum ActionType {
    //Homes
    GET_HOMES = "GET_HOMES",
    SAVE_HOME = "SAVE_HOME",
+
+  //Tasks
+  COMPLETE_TASK = "COMPLETE_TASK",
 }

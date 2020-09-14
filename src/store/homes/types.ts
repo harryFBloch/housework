@@ -57,6 +57,7 @@ export type Homes = {[id: string]: Home}
 
 export type HomesAction = 
 { type: ActionType.GET_HOMES, homes: Homes } | 
-{ type: ActionType.SAVE_HOME, home: Home}
+{ type: ActionType.SAVE_HOME, home: Home} | 
+{ type: ActionType.COMPLETE_TASK, taskID: string, roomID: string, homeID: string}
   
   

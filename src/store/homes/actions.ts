@@ -3,7 +3,7 @@ import firebase from '../../config/FirebaseConfig';
 import 'firebase/database';
 import { ActionType } from "../actionTypes";
 import { RootState } from "..";
-import { Home } from "./types";
+import { Home, Task } from "./types";
 
 export const getHomes = (): ThunkResult<Promise<void>> =>
   async ( dispatch: ThunkDispatchType, getState: () => RootState ): Promise<void> => {
@@ -31,3 +31,14 @@ export const saveHome = (house: Home): ThunkResult<Promise<void>> =>
       return Promise.resolve()
     })
 }
+
+export const completeTask = (task: Task, roomID: string, homeID: string): ThunkResult<Promise<void>> =>
+  async ( dispatch: ThunkDispatchType, getState: () => RootState ): Promise<void> => {
+    const now = new Date()
+  return firebase.database().ref(`/users/${getState().auth.uid}/homes/${homeID}/rooms/${roomID}/tasks/${task.id}/lastCleaned`).set(String(now))
+  .then((ref) => {
+    dispatch({type: ActionType.COMPLETE_TASK, taskID: task.id, roomID, homeID})
+  })
+}
+
+

@@ -1,8 +1,6 @@
 import { IonPage, IonIcon, IonContent, IonButton, IonList, IonText, IonItem, IonLabel, IonItemSliding, IonItemOptions, IonItemOption, IonProgressBar } from '@ionic/react';
-import React, { ReactElement, useEffect, useState, useRef } from 'react';
-import firebase from '../config/FirebaseConfig';
-import 'firebase/analytics';
-import { RootState, ThunkDispatchType, actions, Toast, Homes } from '../store';
+import React, { ReactElement, useRef } from 'react';
+import { RootState, ThunkDispatchType, actions, Toast, Homes, Task } from '../store';
 import { bindActionCreators } from 'redux';
 import { RouteComponentProps } from 'react-router';
 import { connect } from 'react-redux';
@@ -10,6 +8,7 @@ import { addOutline, checkbox } from 'ionicons/icons';
 import Toolbar from '../components/common/Toolbar';
 import classes from './Home.module.css';
 import { IAPProduct } from '@ionic-native/in-app-purchase-2';
+import { percentDone, percentDoneInterval } from '../utils/dates';
 
 interface ReduxStateProps {
   removeAds: boolean;
@@ -30,17 +29,19 @@ interface ReduxDispatchProps {
   showInter: () => Promise<void>;
   sendToast: (toast: Toast) => Promise<void>;
   subscribe: (productID: string) => Promise<void>;
+  completeTask: (task: Task, roomID: string, homeID: string) => Promise<void>;
 }
 
 const mapDispatchToProps = (dispatch: ThunkDispatchType): ReduxDispatchProps => bindActionCreators({
   showInter: actions.flags.showInterAd,
   sendToast: actions.flags.sendToast,
   subscribe: actions.flags.subscribe,
+  completeTask: actions.homes.completeTask,
 }, dispatch);
 
 type Props = ReturnType<typeof mapStateToProps> & ReturnType<typeof mapDispatchToProps> & RouteComponentProps
 
-const Home = ({ showInter, removeAds, history, sendToast, products, subscribe, homes, currentHomeID}: Props): ReactElement => {
+const Home = ({ showInter, removeAds, history, sendToast, products, subscribe, homes, currentHomeID, completeTask}: Props): ReactElement => {
 
   const listRef = useRef<HTMLIonListElement>(null)
 
@@ -77,12 +78,13 @@ const Home = ({ showInter, removeAds, history, sendToast, products, subscribe, h
                     <IonText>{room.name}</IonText>
                     {Object.values(room.tasks).map(task => {
                       return (
-                        <>
-                        <IonItemSliding key={`${room.id}-task-${task.id}`}>
+                        <div key={`${room.id}-task-${task.id}`}>
+                        <IonItemSliding>
                           <IonItemOptions side="start">
                             <IonItemOption color="primary"
                               onClick={() => {
                                 closeList()
+                                completeTask(task, room.id, currentHome.id)
                                 }}>
                               <IonIcon slot="icon-only" icon={checkbox}/>
                           </IonItemOption>
@@ -91,8 +93,8 @@ const Home = ({ showInter, removeAds, history, sendToast, products, subscribe, h
                             <IonLabel slot="start">{task.name}</IonLabel>
                           </IonItem>
                         </IonItemSliding>
-                        <IonProgressBar value={0.6}></IonProgressBar><br />
-                        </>
+                        <IonProgressBar value={percentDoneInterval(task.lastCleaned, task.cleanInterval)}></IonProgressBar><br />
+                        </div>
                       )
                     })}
                   </div>
