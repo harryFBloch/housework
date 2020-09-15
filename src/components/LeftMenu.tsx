@@ -9,6 +9,7 @@ import { IAPProduct } from '@ionic-native/in-app-purchase-2';
 import { logout } from '../store/auth/actions';
 import { RouteComponentProps, withRouter } from 'react-router';
 import { pencil, qrCode } from 'ionicons/icons';
+import QR from './QRCode';
 
 interface ReduxStateProps {
   products: IAPProduct[];
@@ -48,6 +49,7 @@ type Props = ReturnType<typeof mapStateToProps> & ReturnType<typeof mapDispatchT
 export const LeftMenu = ({ initializeInter, products, subscribe, removeAds, auth, restorePurchase, toast, getHomes, history, homes, currentHome }: Props): ReactElement => {
 
   const [alert, setAlert] = useState(false)
+  const [textToEncode, setTextToEncode] = useState("");
 
   const handleInitializeAd = () => {
     initializeInter()
@@ -67,11 +69,27 @@ export const LeftMenu = ({ initializeInter, products, subscribe, removeAds, auth
     }
   }, [auth.uid])
 
+  useEffect((): void => {
+    if (textToEncode) {
+      setAlert(true);
+    } else {
+      setAlert(false);
+    }
+  }, [textToEncode])
+
+  const handleQRClick = (textToEncode: string): void => {
+    setTextToEncode(textToEncode);
+  }
+
+  const handleCloseAlert = (): void => {
+    setTextToEncode("")
+  }
+
   const renderProducts = (product: IAPProduct): ReactElement => {
     return(
       <IonButton className={classes.productButton} 
         onClick={() => subscribe(product.id)} key={product.id} 
-        color="primary">
+        color="warning">
         Click Here to {products[0].title} For Only {products[0].price} a {products[0].billingPeriodUnit}
       </IonButton>
     )
@@ -88,7 +106,9 @@ export const LeftMenu = ({ initializeInter, products, subscribe, removeAds, auth
             <IonButton slot="end" className={classes.iconButton}>
               <IonIcon icon={pencil}/>
             </IonButton>
-            <IonButton slot="end" className={classes.iconButton}>
+            <IonButton slot="end" className={classes.iconButton}
+            onClick={() => handleQRClick(`${auth.uid}-doing_housework-${homeID}`)}
+            >
               <IonIcon icon={qrCode}/>
             </IonButton>
           </IonItem>
@@ -100,6 +120,7 @@ export const LeftMenu = ({ initializeInter, products, subscribe, removeAds, auth
 
   return (
     <IonMenu side="start" menuId="left" contentId='main' color="secondary">
+      {alert && <QR handleAlertClose={handleCloseAlert} textToEncode={textToEncode}/>}
       <IonHeader>
         <IonToolbar color="primary">
           <IonTitle>Houses</IonTitle>
@@ -108,9 +129,13 @@ export const LeftMenu = ({ initializeInter, products, subscribe, removeAds, auth
       <IonContent color="secondary">
         {renderHomes()}
 
+        <IonMenuToggle menu="left">
+          <IonButton className={classes.productButton} routerLink="/addHome" routerDirection="forward">Add House</IonButton>
+        </IonMenuToggle>
+
         {!removeAds && products[0] && renderProducts(products[0])}
-        <IonButton className={classes.productButton} onClick={restorePurchase}>Restore Purchases</IonButton>
-        <IonButton className={classes.productButton} onClick={logout}>Logout</IonButton>
+        <IonButton className={classes.productButton} color="warning" onClick={restorePurchase}>Restore Purchases</IonButton>
+        <IonButton className={classes.productButton} color="warning" onClick={logout}>Logout</IonButton>
       </IonContent>
       <IonToast isOpen={toast.open} color={toast.color} message={toast.message} position="top"/>
     </IonMenu>
