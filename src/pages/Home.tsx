@@ -52,6 +52,16 @@ const Home = ({ showInter, removeAds, history, sendToast, products, subscribe, h
   }
 
   const currentHome = homes[currentHomeID];
+
+  const getBarColor = (percentDone: number): string => {
+    if (percentDone < 0.33) {
+      return 'primary'
+    } else if (percentDone < 0.66) {
+      return 'warning'
+    } else {
+      return 'danger'
+    }
+  }
     
   return (
     <IonPage>
@@ -71,32 +81,37 @@ const Home = ({ showInter, removeAds, history, sendToast, products, subscribe, h
             }
           </div>
           { currentHome && 
-            <IonList ref={listRef}>
+            <IonList ref={listRef} className={classes.list}>
               {Object.values(currentHome.rooms).map( room => {
                 return (
                   <div key={`room-${room.id}`}>
-                    <IonText>{room.name}</IonText>
-                    {Object.values(room.tasks).map(task => {
-                      return (
-                        <div key={`${room.id}-task-${task.id}`}>
-                        <IonItemSliding>
-                          <IonItemOptions side="start">
-                            <IonItemOption color="primary"
-                              onClick={() => {
-                                closeList()
-                                completeTask(task, room.id, currentHome.id)
-                                }}>
-                              <IonIcon slot="icon-only" icon={checkbox}/>
-                          </IonItemOption>
-                        </IonItemOptions>
-                          <IonItem lines='full'>
-                            <IonLabel slot="start">{task.name}</IonLabel>
-                          </IonItem>
-                        </IonItemSliding>
-                        <IonProgressBar value={percentDoneInterval(task.lastCleaned, task.cleanInterval)}></IonProgressBar><br />
-                        </div>
-                      )
-                    })}
+                    <IonText className={classes.roomLabel}>{room.name}</IonText>
+                    <div className={classes.roomContainer}>
+                      {Object.values(room.tasks).map(task => {
+                        const percentDone = percentDoneInterval(task.lastCleaned, task.cleanInterval)
+                        const barColor = getBarColor(percentDone)
+                        return (
+                          <div key={`${room.id}-task-${task.id}`}>
+                          <IonItemSliding>
+                            <IonItemOptions side="start">
+                              <IonItemOption color="primary"
+                                onClick={() => {
+                                  closeList()
+                                  completeTask(task, room.id, currentHome.id)
+                                  }}>
+                                <IonIcon slot="icon-only" icon={checkbox}/>
+                            </IonItemOption>
+                          </IonItemOptions>
+                            <IonItem lines='none'>
+                              <IonLabel slot="start">{task.name}</IonLabel>
+                            </IonItem>
+                          </IonItemSliding>
+                          <IonProgressBar color={barColor}
+                          value={percentDoneInterval(task.lastCleaned, task.cleanInterval)}></IonProgressBar><br />
+                          </div>
+                        )
+                      })}
+                    </div>
                   </div>
                 )
               })}

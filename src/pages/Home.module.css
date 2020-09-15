@@ -52,3 +52,19 @@
   width: 100%;
   font-weight: bold;
 }
+
+.list {
+  padding: 8px;
+}
+
+.roomContainer {
+  padding: 8px;
+  border: solid var(--ion-color-primary) 3px;
+  border-radius: 10px;
+}
+
+.roomLabel {
+  font-weight: bold;
+  color: var(--ion-color-primary);
+  margin: 8px;
+}

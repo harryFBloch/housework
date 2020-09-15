@@ -8,6 +8,7 @@ import classes from './LeftMenu.module.css';
 import { IAPProduct } from '@ionic-native/in-app-purchase-2';
 import { logout } from '../store/auth/actions';
 import { RouteComponentProps, withRouter } from 'react-router';
+import { pencil, qrCode } from 'ionicons/icons';
 
 interface ReduxStateProps {
   products: IAPProduct[];
@@ -84,6 +85,12 @@ export const LeftMenu = ({ initializeInter, products, subscribe, removeAds, auth
         return (
           <IonItem lines="none" key={'homes-' + home.id} color={currentHome === home.id ? 'primary' : 'secondary'}>
             <IonLabel slot="start">{home.name}</IonLabel>
+            <IonButton slot="end" className={classes.iconButton}>
+              <IonIcon icon={pencil}/>
+            </IonButton>
+            <IonButton slot="end" className={classes.iconButton}>
+              <IonIcon icon={qrCode}/>
+            </IonButton>
           </IonItem>
         )
       }  
@@ -93,8 +100,12 @@ export const LeftMenu = ({ initializeInter, products, subscribe, removeAds, auth
 
   return (
     <IonMenu side="start" menuId="left" contentId='main' color="secondary">
+      <IonHeader>
+        <IonToolbar color="primary">
+          <IonTitle>Houses</IonTitle>
+        </IonToolbar>
+      </IonHeader>
       <IonContent color="secondary">
-
         {renderHomes()}
 
         {!removeAds && products[0] && renderProducts(products[0])}
