@@ -103,9 +103,12 @@ export const LeftMenu = ({ initializeInter, products, subscribe, removeAds, auth
         return (
           <IonItem lines="none" key={'homes-' + home.id} color={currentHome === home.id ? 'primary' : 'secondary'}>
             <IonLabel slot="start">{home.name}</IonLabel>
-            <IonButton slot="end" className={classes.iconButton}>
+            <IonMenuToggle menu="left" slot="end">
+            <IonButton  className={classes.iconButton} routerLink={`/addHome/${home.id}`} routerDirection="forward">
               <IonIcon icon={pencil}/>
             </IonButton>
+
+            </IonMenuToggle>
             <IonButton slot="end" className={classes.iconButton}
             onClick={() => handleQRClick(`${auth.uid}-doing_housework-${homeID}`)}
             >

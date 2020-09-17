@@ -1,19 +1,20 @@
-import React, { ReactElement, useState } from 'react'
+import React, { ReactElement, useState, useEffect } from 'react'
 
 import { IonPage, IonIcon, IonContent, IonButton, IonInput, IonList, IonText, IonItem, IonLabel } from '@ionic/react';
-import { RootState, ThunkDispatchType, actions, Toast, HomeTemplate, RoomTemplate, TaskTemplate, Home } from '../store';
+import { RootState, ThunkDispatchType, actions, Toast, HomeTemplate, RoomTemplate, TaskTemplate, Home, Homes } from '../store';
 import { bindActionCreators } from 'redux';
 import { RouteComponentProps } from 'react-router';
 import { connect } from 'react-redux';
 import Toolbar from '../components/common/Toolbar';
 import classes from './AddHome.module.css';
 import { qrCode, addOutline } from 'ionicons/icons';
-import { act } from 'react-dom/test-utils';
 
 interface ReduxStateProps {
+  homes: Homes;
 };
 
 const mapStateToProps = (state: RootState): ReduxStateProps => ({
+  homes: state.homes.homes
 });
 
 // Need to define types here because it won't infer properly from ThunkResult right now
@@ -29,12 +30,25 @@ const mapDispatchToProps = (dispatch: ThunkDispatchType): ReduxDispatchProps => 
   saveHome: actions.homes.saveHome
 }, dispatch);
 
-type Props = ReturnType<typeof mapStateToProps> & ReturnType<typeof mapDispatchToProps> & RouteComponentProps
+interface MatchParams {
+  id?: string;
+}
+interface MatchProps extends RouteComponentProps<MatchParams>{}
 
-const AddHome = ({ saveHome, sendToast }: Props): ReactElement => {
+type Props = ReturnType<typeof mapStateToProps> & ReturnType<typeof mapDispatchToProps> & RouteComponentProps & MatchProps
+
+const AddHome = ({ saveHome, sendToast, match, homes }: Props): ReactElement => {
 
   const [phase, setPhase] = useState(0);
   const [house, setHouse] = useState({...HomeTemplate});
+
+  useEffect(() => {
+    if (Object.keys(homes).length > 0 && match.params.id) {
+      const home = homes[match.params.id];
+      setPhase(1)
+      setHouse(home)
+    }
+  }, [homes, match])
 
   const renderPhaseZero = (): ReactElement => (
     <div className={classes.pageContainer}>

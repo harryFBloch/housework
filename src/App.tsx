@@ -57,7 +57,7 @@ const App: React.FC = () => {
         <RightMenu />
         <IonRouterOutlet id="main" draggable={false}>
           <PrivateRoute path="/home" component={Home} exact={true} />
-          <PrivateRoute path="/addHome" component={AddHome} exact={true}/>
+          <PrivateRoute path="/addHome/:id" component={AddHome} exact={true}/>
           <PublicRoute path="/login" component={Login} />
           <PublicRoute path="/terms" component={Terms} />
           <PublicRoute path="/privacy" component={Privacy} />
